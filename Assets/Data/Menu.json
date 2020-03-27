@@ -1,0 +1,7 @@
+{
+  "menuItems": [
+    {"menuItem": "start"}, 
+    {"menuItem": "pause"}, 
+    {"menuItem": "exit"} 
+  ]
+}
