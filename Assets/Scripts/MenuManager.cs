@@ -11,6 +11,7 @@ using UnityEngine;
 public class MenuManager : MonoBehaviour
 {
     public GameObject btnPrefab;
+    private GameObject menuInstance;
     private float timeDown = 0f;
     private Vector3 menuStartPosition;
     private int menuStartQytyLimit = 1, menuStartQytyCount = 0;
@@ -35,7 +36,11 @@ public class MenuManager : MonoBehaviour
     } 
 
     private void InstantiateMenu(){
-      Instantiate(btnPrefab,menuStartPosition, Quaternion.identity);
+      menuInstance = Instantiate(btnPrefab,menuStartPosition, Quaternion.identity);
+    }
+
+    private void ClearMenuInstance(){
+      Destroy(menuInstance, 0.3f);
     }
 
     private void SetStartPosition(Vector3 touch){
@@ -52,6 +57,8 @@ public class MenuManager : MonoBehaviour
     private void HandleTouchEnded(Vector3 touch){
       touchEnd = true;
       timeHeld = 0f;
+      menuStartQytyCount = 0;
+      ClearMenuInstance();
     }
 
 
@@ -81,7 +88,8 @@ public class MenuManager : MonoBehaviour
             }
             if (Input.GetMouseButtonUp (0))
             {
-                HandleTouchEnded (Camera.main.ScreenToWorldPoint(Input.mousePosition));
+              Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+                HandleTouchEnded (touch);
             }
         }
     }
