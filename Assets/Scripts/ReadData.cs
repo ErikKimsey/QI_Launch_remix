@@ -24,7 +24,7 @@ public class ReadData : MonoBehaviour {
       MenuItems menuItemsArr = JsonUtility.FromJson<MenuItems>(menuJson.text);
       foreach (MenuItem menuItem in menuItemsArr.menuItems)
         {
-            Debug.Log("states: " + menuItem.menuItem);
+            // Debug.Log("states: " + menuItem.menuItem);
         }
   }
 }

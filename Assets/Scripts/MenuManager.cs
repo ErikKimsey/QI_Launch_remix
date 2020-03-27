@@ -3,9 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
-  - On hold (( 2sec )): display main item, and scaled-down submenu items,
-  - On hold and move toward submenu items: submenu items scale up
-  - On over submenu item and hold (( 2sec )): acts as item selection
+  - MainMenu Prefab contains:
+  -- subMenu item prefabs,
+  -- menu functionality
+*/
+
+/**
+  - On hold (( 2sec )): display main item
+  - On hold (( +1sec )): main menu item scales 2x size && , and scaled-down submenu items,
+  - On hold and move touch toward submenu items: indicated submenu item scale up
+  - On mover over submenu item and hold (( 2sec )): acts as item selection
+
+  - On touch end: destroy menu instance
 */
 
 public class MenuManager : MonoBehaviour
