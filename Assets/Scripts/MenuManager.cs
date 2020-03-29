@@ -21,6 +21,10 @@ public class MenuManager : MonoBehaviour
 {
     public GameObject btnPrefab;
     private GameObject menuInstance;
+
+    public const int menuRadius = 200;
+    public const int menuAngle = 90;
+
     private float timeDown = 0f;
     private Vector3 menuStartPosition;
     private int menuStartQytyLimit = 1, menuStartQytyCount = 0;
@@ -28,11 +32,13 @@ public class MenuManager : MonoBehaviour
     private float timeHeld = 0f;
     private bool touchEnd = true;
 
+    public int numberOfSubItems;
+
 
 
     void Start()
     {
-      Debug.Log(menuStartPosition);
+      // Debug.Log(menuStartPosition);
     }
 
     private void TimeHeld(){
@@ -45,7 +51,7 @@ public class MenuManager : MonoBehaviour
     } 
 
     private void InstantiateMenu(){
-      menuInstance = Instantiate(btnPrefab,menuStartPosition, Quaternion.identity);
+      menuInstance = Instantiate(btnPrefab, menuStartPosition, Quaternion.identity);
     }
 
     private void ClearMenuInstance(){
@@ -60,17 +66,17 @@ public class MenuManager : MonoBehaviour
       touchEnd = false;
       SetStartPosition(touch);
     }
+
     private void HandleTouchMoved(Vector3 touch){
       Debug.Log(touch);
     }
+
     private void HandleTouchEnded(Vector3 touch){
       touchEnd = true;
       timeHeld = 0f;
       menuStartQytyCount = 0;
       ClearMenuInstance();
     }
-
-
 
     private void HandleTouch(){
         if (Input.touchCount > 0)
