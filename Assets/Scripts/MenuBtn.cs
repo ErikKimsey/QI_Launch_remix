@@ -7,9 +7,12 @@ public class MenuBtn : MonoBehaviour
     public GameObject btn;
     private Vector3 btnWorldToScreenPosition;
     private Vector3 btnRadiusWorldToScreenPosition;
-    private float[] btnToScreenDistances;
+
     private float btnRadius;
     private Mesh btnMesh;
+
+    private Vector3 buttonArcLocation;
+    private string navAction;
 
     Camera cam;
 
@@ -31,6 +34,6 @@ public class MenuBtn : MonoBehaviour
 
     void Update()
     {
-      Debug.Log(transform.position);
+      
     }
 }

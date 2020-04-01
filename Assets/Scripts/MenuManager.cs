@@ -20,6 +20,7 @@ using UnityEngine;
 public class MenuManager : MonoBehaviour
 {
     public GameObject btnPrefab;
+    public GameObject subMenuBtn;
     private GameObject menuInstance;
 
     public const int menuRadius = 200;
@@ -29,25 +30,19 @@ public class MenuManager : MonoBehaviour
     private int menuStartQytyLimit = 1, menuStartQytyCount = 0;
 
     private float timeHeld = 0f;
-    private bool touchEnd = true;
-
-    public int numberOfSubItems;
+    private bool subMenuTouchEnd = true;
 
     private Vector3 screenCenter;
     private float centerX, centerY;
     private float screenWidth, screenHeight;
 
-
-    private void Awake() {
-      
-    }
+    public int numbOfMenuItems;
+    private GameObject[] buttonArray;
 
 
     void Start()
     {
-      centerX = Screen.width / 2;
-      centerY = Screen.height / 2;
-      screenCenter = new Vector3(centerX, centerY, 0f);
+      SetScreenCenter();
     }
 
     private void TimeHeld(){
@@ -59,36 +54,49 @@ public class MenuManager : MonoBehaviour
         }
     } 
 
-    private void SetScreenWH(){
-      screenWidth = Screen.width;
-      screenHeight = Screen.height;
+    IEnumerator CreateSubMenu(){
+      Debug.Log("DELAYED");
+      for(int i=0; i<numbOfMenuItems; i++){
+         Instantiate(btnPrefab,new Vector3(2 * i,2 * i,menuStartPosition.z),Quaternion.identity);
+      }
+      yield return new WaitForSeconds(1f);
+    }
+
+    private void CalcItemLocationOnArc(){
+
+    }
+
+    private void SetScreenCenter(){
+      centerX = Screen.width / 2;
+      centerY = Screen.height / 2;
+      screenCenter = new Vector3(centerX, centerY, 0f);
     }
 
     private void InstantiateMenu(){
-      menuInstance = Instantiate(btnPrefab, menuStartPosition, Quaternion.identity);
+      menuInstance = Instantiate(subMenuBtn, menuStartPosition, Quaternion.identity);
+      StartCoroutine(CreateSubMenu());
     }
 
     private void ClearMenuInstance(){
       Destroy(menuInstance, 0.3f);
+      Destroy(btnPrefab);
     }
 
     private void SetStartPosition(Vector3 touch){
-      Debug.Log("touch");
-      Debug.Log(touch);
       menuStartPosition = Camera.main.ScreenToWorldPoint(touch);
     }
 
     private void HandleTouchBegan(Vector3 touch){
-      touchEnd = false;
+      subMenuTouchEnd = false;
       SetStartPosition(touch);
     }
 
     private void HandleTouchMoved(Vector3 touch){
-      Debug.Log(touch);
+      // Debug.Log(touch);
     }
 
-    private void HandleTouchEnded(Vector3 touch){
-      touchEnd = true;
+    private void HandlesubMenuTouchEnded(Vector3 touch){
+      subMenuTouchEnd = true;
       timeHeld = 0f;
       menuStartQytyCount = 0;
       ClearMenuInstance();
@@ -117,9 +125,9 @@ public class MenuManager : MonoBehaviour
                     // HandleTouchMoved (touch.position);
                     break;
                 case TouchPhase.Ended:
-                //     HandleTouchEnded (touch.position);
+                //     HandlesubMenuTouchEnded (touch.position);
                 //     Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                // HandleTouchEnded (touch);
+                // HandlesubMenuTouchEnded (touch);
                     break;
             }
         } 
@@ -129,13 +137,13 @@ public class MenuManager : MonoBehaviour
                 Vector3 touch = (new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
                 float angle = CalcAngleToCenter(touch);
                 screenCenter.z = 10f;
-                Debug.DrawRay(touch, screenCenter, Color.cyan);
+                // Debug.DrawRay(touch, screenCenter, Color.cyan);
                 HandleTouchBegan (touch);
             }
             if (Input.GetMouseButtonUp (0))
             {
               Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                HandleTouchEnded (touch);
+                HandlesubMenuTouchEnded (touch);
             }
         }
     }
@@ -143,7 +151,7 @@ public class MenuManager : MonoBehaviour
     void Update()
     {
       HandleTouch();
-      if(touchEnd == false){
+      if(subMenuTouchEnd == false){
         TimeHeld();
       } 
     }
