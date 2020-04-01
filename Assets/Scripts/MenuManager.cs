@@ -25,7 +25,6 @@ public class MenuManager : MonoBehaviour
     public const int menuRadius = 200;
     public const int menuAngle = 90;
 
-    private float timeDown = 0f;
     private Vector3 menuStartPosition;
     private int menuStartQytyLimit = 1, menuStartQytyCount = 0;
 
@@ -34,11 +33,21 @@ public class MenuManager : MonoBehaviour
 
     public int numberOfSubItems;
 
+    private Vector3 screenCenter;
+    private float centerX, centerY;
+    private float screenWidth, screenHeight;
+
+
+    private void Awake() {
+      
+    }
 
 
     void Start()
     {
-      // Debug.Log(menuStartPosition);
+      centerX = Screen.width / 2;
+      centerY = Screen.height / 2;
+      screenCenter = new Vector3(centerX, centerY, 0f);
     }
 
     private void TimeHeld(){
@@ -50,6 +59,11 @@ public class MenuManager : MonoBehaviour
         }
     } 
 
+    private void SetScreenWH(){
+      screenWidth = Screen.width;
+      screenHeight = Screen.height;
+    }
+
     private void InstantiateMenu(){
       menuInstance = Instantiate(btnPrefab, menuStartPosition, Quaternion.identity);
     }
@@ -59,7 +73,9 @@ public class MenuManager : MonoBehaviour
     }
 
     private void SetStartPosition(Vector3 touch){
-      menuStartPosition = touch;
+      Debug.Log("touch");
+      Debug.Log(touch);
+      menuStartPosition = Camera.main.ScreenToWorldPoint(touch);
     }
 
     private void HandleTouchBegan(Vector3 touch){
@@ -78,6 +94,12 @@ public class MenuManager : MonoBehaviour
       ClearMenuInstance();
     }
 
+    private float CalcAngleToCenter(Vector3 touch){
+      Vector3 direction = touch - screenCenter;
+      float rad2Deg = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 180f;
+      return rad2Deg;
+    }
+
     private void HandleTouch(){
         if (Input.touchCount > 0)
         {
@@ -85,20 +107,29 @@ public class MenuManager : MonoBehaviour
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    HandleTouchBegan (touch.position);
+                    // HandleTouchBegan (touch.position);
+                    // Vector3 touch = (new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+                    // float angle = CalcAngleToCenter(touch);
+                    // screenCenter.z = 10f;
+                    // HandleTouchBegan (touch);
                     break;
                 case TouchPhase.Moved:
-                    HandleTouchMoved (touch.position);
+                    // HandleTouchMoved (touch.position);
                     break;
                 case TouchPhase.Ended:
-                    HandleTouchEnded (touch.position);
+                //     HandleTouchEnded (touch.position);
+                //     Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+                // HandleTouchEnded (touch);
                     break;
             }
         } 
         else {
             if (Input.GetMouseButtonDown (0))
             {
-                Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+                Vector3 touch = (new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+                float angle = CalcAngleToCenter(touch);
+                screenCenter.z = 10f;
+                Debug.DrawRay(touch, screenCenter, Color.cyan);
                 HandleTouchBegan (touch);
             }
             if (Input.GetMouseButtonUp (0))
@@ -109,7 +140,6 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
       HandleTouch();
