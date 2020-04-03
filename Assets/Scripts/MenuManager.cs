@@ -23,11 +23,14 @@ public class MenuManager : MonoBehaviour
     public GameObject subMenuBtn;
     private GameObject menuInstance;
 
-    public const int menuRadius = 200;
-    public const int menuAngle = 90;
+    private float rad2Degs;
+
+    public const float menuRadius = 50f; // hypotenuse for btn coordinates
+
+    public const float menuAngle = 90f;
 
     private Vector3 menuStartPosition;
-    private int menuStartQytyLimit = 1, menuStartQytyCount = 0;
+    private int menuStartQtyLimit = 1, menuStartQtyCount = 0;
 
     private float timeHeld = 0f;
     private bool subMenuTouchEnd = true;
@@ -47,23 +50,55 @@ public class MenuManager : MonoBehaviour
 
     private void TimeHeld(){
         timeHeld += Time.deltaTime;
-        if(timeHeld > 0.5f && menuStartQytyCount < menuStartQytyLimit){
+        if(timeHeld > 0.5f && menuStartQtyCount < menuStartQtyLimit){
           InstantiateMenu();
-          menuStartQytyCount+=1;
+          menuStartQtyCount+=1;
           return;
         }
     } 
 
-    IEnumerator CreateSubMenu(){
-      Debug.Log("DELAYED");
-      for(int i=0; i<numbOfMenuItems; i++){
-         Instantiate(btnPrefab,new Vector3(2 * i,2 * i,menuStartPosition.z),Quaternion.identity);
-      }
-      yield return new WaitForSeconds(1f);
+    
+    private float CalcAngleToCenter(Vector3 touch){
+      Vector3 direction = touch - screenCenter;
+      rad2Degs = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 180f;
+      Debug.Log("rad2Degs");
+      Debug.Log(rad2Degs);
+      return rad2Degs;
     }
 
-    private void CalcItemLocationOnArc(){
+    private Vector3 CalcItemLocationOnArc( int index, int len ){
+      
+      // 2. incrementAngleValue = 90 / numbOfBtns
+      float incrementAngleValue = menuAngle / len;
+      float startPointAngle = (index > 0) ? : rad2Degs - (menuAngle / 2);
+      if(index == 0){
+        startPointAngle = rad2Degs - (menuAngle / 2);
+      } else if (index > 0) {
+        pointAngle = startPointAngle + incrementAngleValue;
+      }
+      // 3. nextPointAngle = startingAngle + incrementAngleValue
 
+      // 
+      // 4. x = menuRadius * cos(nextPointAngle)
+      float x = menuRadius * Mathf.Cos(startPointAngle);
+
+      // 5. y = menuRadius * sin(nextPointAngle)
+      float y = menuRadius * Mathf.Sin(startPointAngle);
+
+      // 6. z = menuStartPosition.z
+      float z = menuStartPosition.z;
+      return new Vector3(x, y, z);
+    }
+
+    IEnumerator CreateSubMenu(){
+      buttonArray = new GameObject[numbOfMenuItems];
+
+      for(int i=0; i<numbOfMenuItems; i++){
+        Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
+         GameObject clone = Instantiate(btnPrefab, new Vector3(0.02f * i, 0.2f * i,menuStartPosition.z),Quaternion.identity);
+        buttonArray[i] = clone;
+      }
+      yield return new WaitForSeconds(1f);
     }
 
     private void SetScreenCenter(){
@@ -78,8 +113,11 @@ public class MenuManager : MonoBehaviour
     }
 
     private void ClearMenuInstance(){
+      for (int i = 0; i < buttonArray.Length; i++)
+      {
+        Destroy(buttonArray[i]);
+      }
       Destroy(menuInstance, 0.3f);
-      Destroy(btnPrefab);
     }
 
     private void SetStartPosition(Vector3 touch){
@@ -98,14 +136,8 @@ public class MenuManager : MonoBehaviour
     private void HandlesubMenuTouchEnded(Vector3 touch){
       subMenuTouchEnd = true;
       timeHeld = 0f;
-      menuStartQytyCount = 0;
+      menuStartQtyCount = 0;
       ClearMenuInstance();
-    }
-
-    private float CalcAngleToCenter(Vector3 touch){
-      Vector3 direction = touch - screenCenter;
-      float rad2Deg = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 180f;
-      return rad2Deg;
     }
 
     private void HandleTouch(){
@@ -137,7 +169,6 @@ public class MenuManager : MonoBehaviour
                 Vector3 touch = (new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
                 float angle = CalcAngleToCenter(touch);
                 screenCenter.z = 10f;
-                // Debug.DrawRay(touch, screenCenter, Color.cyan);
                 HandleTouchBegan (touch);
             }
             if (Input.GetMouseButtonUp (0))
