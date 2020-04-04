@@ -42,6 +42,9 @@ public class MenuManager : MonoBehaviour
     public int numbOfMenuItems;
     private GameObject[] buttonArray;
 
+    float pointAngle;
+    float incrementAngleValue;
+
 
     void Start()
     {
@@ -68,22 +71,22 @@ public class MenuManager : MonoBehaviour
 
     private Vector3 CalcItemLocationOnArc( int index, int len ){
       
-      // 2. incrementAngleValue = 90 / numbOfBtns
-      float incrementAngleValue = menuAngle / len;
-      float startPointAngle = (index > 0) ? : rad2Degs - (menuAngle / 2);
+      // 1. value by which to increment point angles 
+      incrementAngleValue = menuAngle / len;
+      
+      // 2. initial point angle
       if(index == 0){
-        startPointAngle = rad2Degs - (menuAngle / 2);
+        pointAngle = rad2Degs - (menuAngle / 2);
       } else if (index > 0) {
-        pointAngle = startPointAngle + incrementAngleValue;
+        // 3. nextPointAngle = startingAngle + incrementAngleValue
+        pointAngle = pointAngle + incrementAngleValue;
       }
-      // 3. nextPointAngle = startingAngle + incrementAngleValue
 
-      // 
       // 4. x = menuRadius * cos(nextPointAngle)
-      float x = menuRadius * Mathf.Cos(startPointAngle);
+      float x = menuRadius * Mathf.Cos(pointAngle);
 
       // 5. y = menuRadius * sin(nextPointAngle)
-      float y = menuRadius * Mathf.Sin(startPointAngle);
+      float y = menuRadius * Mathf.Sin(pointAngle);
 
       // 6. z = menuStartPosition.z
       float z = menuStartPosition.z;
