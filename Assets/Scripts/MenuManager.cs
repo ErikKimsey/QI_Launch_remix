@@ -85,7 +85,7 @@ public class MenuManager : MonoBehaviour
       Debug.Log(y);
 
       float z = 10f;
-      return new Vector3(x, y, z);
+      return Camera.main.ScreenToWorldPoint(new Vector3(x, y, z));
     }
 
     IEnumerator CreateSubMenu(){
@@ -104,9 +104,8 @@ public class MenuManager : MonoBehaviour
     private void SetScreenCenter(){
       centerX = Screen.width / 2;
       centerY = Screen.height / 2;
-      screenCenter = new Vector3(centerX, centerY, 0f);
+      screenCenter = Camera.main.ScreenToWorldPoint(new Vector3(centerX, centerY, 0f));
       Debug.Log(screenCenter);
-      Vector3 world
     }
 
     private void InstantiateMenu(){
