@@ -25,9 +25,9 @@ public class MenuManager : MonoBehaviour
 
     private float rad2Degs;
 
-    public const float menuRadius = 50f; // hypotenuse for btn coordinates
+    public const float menuRadius = 20f; // hypotenuse for btn coordinates
 
-    public const float menuAngle = 90f;
+    public const float menuAngle = 5f;
 
     private Vector3 menuStartPosition;
     private int menuStartQtyLimit = 1, menuStartQtyCount = 0;
@@ -60,7 +60,6 @@ public class MenuManager : MonoBehaviour
         }
     } 
 
-    
     private float CalcAngleToCenter(Vector3 touch){
       Vector3 direction = touch - screenCenter;
       rad2Degs = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 180f;
@@ -70,36 +69,34 @@ public class MenuManager : MonoBehaviour
     }
 
     private Vector3 CalcItemLocationOnArc( int index, int len ){
-      
-      // 1. value by which to increment point angles 
+
       incrementAngleValue = menuAngle / len;
-      
-      // 2. initial point angle
+
       if(index == 0){
-        pointAngle = rad2Degs - (menuAngle / 2);
+        pointAngle = rad2Degs;
       } else if (index > 0) {
-        // 3. nextPointAngle = startingAngle + incrementAngleValue
-        pointAngle = pointAngle + incrementAngleValue;
+        // pointAngle = pointAngle + incrementAngleValue;
       }
+      float x = menuRadius * Mathf.Sin(rad2Degs);
+      Debug.Log("x");
+      Debug.Log(x);
+      float y = menuRadius * Mathf.Cos(rad2Degs);
+      Debug.Log("y");
+      Debug.Log(y);
 
-      // 4. x = menuRadius * cos(nextPointAngle)
-      float x = menuRadius * Mathf.Cos(pointAngle);
-
-      // 5. y = menuRadius * sin(nextPointAngle)
-      float y = menuRadius * Mathf.Sin(pointAngle);
-
-      // 6. z = menuStartPosition.z
-      float z = menuStartPosition.z;
+      float z = 10f;
       return new Vector3(x, y, z);
     }
 
     IEnumerator CreateSubMenu(){
       buttonArray = new GameObject[numbOfMenuItems];
-
       for(int i=0; i<numbOfMenuItems; i++){
         Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
-         GameObject clone = Instantiate(btnPrefab, new Vector3(0.02f * i, 0.2f * i,menuStartPosition.z),Quaternion.identity);
+        // Debug.Log("itemPosition");
+        // Debug.Log(itemPosition);
+         GameObject clone = Instantiate(btnPrefab, new Vector3(itemPosition.x, itemPosition.y, menuStartPosition.z),Quaternion.identity);
         buttonArray[i] = clone;
+        Debug.DrawRay(menuStartPosition, itemPosition, Color.red);
       }
       yield return new WaitForSeconds(1f);
     }
@@ -108,6 +105,8 @@ public class MenuManager : MonoBehaviour
       centerX = Screen.width / 2;
       centerY = Screen.height / 2;
       screenCenter = new Vector3(centerX, centerY, 0f);
+      Debug.Log(screenCenter);
+      Vector3 world
     }
 
     private void InstantiateMenu(){
@@ -124,7 +123,11 @@ public class MenuManager : MonoBehaviour
     }
 
     private void SetStartPosition(Vector3 touch){
-      menuStartPosition = Camera.main.ScreenToWorldPoint(touch);
+      // Debug.Log("touch");
+      // Debug.Log(touch);
+      menuStartPosition = touch;
+      Debug.Log("menuStartPosition");
+      Debug.Log(menuStartPosition);
     }
 
     private void HandleTouchBegan(Vector3 touch){
@@ -169,8 +172,8 @@ public class MenuManager : MonoBehaviour
         else {
             if (Input.GetMouseButtonDown (0))
             {
-                Vector3 touch = (new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                float angle = CalcAngleToCenter(touch);
+                Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+                CalcAngleToCenter(touch);
                 screenCenter.z = 10f;
                 HandleTouchBegan (touch);
             }
