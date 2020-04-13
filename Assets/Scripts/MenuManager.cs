@@ -62,44 +62,20 @@ public class MenuManager : MonoBehaviour
 
     private float CalcAngleToCenter(Vector3 touch){
       Vector3 direction = touch - screenCenter;
-      Debug.Log("direction");
-      Debug.Log(direction);
       rad2Degs = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 180f;
-      Debug.Log("rad2Degs");
-      Debug.Log(rad2Degs);
       return rad2Degs;
     }
 
     private Vector3 CalcItemLocationOnArc( int index, int len ){
 
-      // in radians
       incrementAngleValue = (Mathf.PI/2f) / len;
-      Debug.Log("incrementAngleValue");
-      Debug.Log(incrementAngleValue);
-
-      // arc = r * theta
-      /**
-        - 1. Touch position (touch.x, touch.y) is (0,0) for menu circle.
-        - 2. Create arbitrary point: Use "touch" 
-        - 3. Distance from touch to arbitrary point on circle: Vector3 direction = arbitraryPoint - touch;
-          --- ex: arb2Touch = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 180f;
-        - 3. 
-      */
-
-
-      // April 9, 2020
-      // 1. 
 
       float touchAngle = rad2Degs * Mathf.Deg2Rad;
       if (index == 0){
-        // pointAngle = touchAngle - incrementAngleValue * (len/2);
         pointAngle = touchAngle - (incrementAngleValue * (len/2));
       } else {
         pointAngle = pointAngle + incrementAngleValue;
       }
-      Debug.Log("pointAngle");
-      Debug.Log(pointAngle);
-      // float x = menuRadius * Mathf.Sin(pointAngle);
       float x = Mathf.Cos(pointAngle) * 2f;
       float y = Mathf.Sin(pointAngle) * 2f;
       Vector3 screen = new Vector3(x, y, menuInstance.transform.position.z);
@@ -110,11 +86,8 @@ public class MenuManager : MonoBehaviour
       buttonArray = new GameObject[numbOfMenuItems];
       for(int i=0; i<numbOfMenuItems; i++){
         Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
-        Debug.Log("point location");
-        Debug.Log(itemPosition);
         GameObject clone = Instantiate(btnPrefab, itemPosition + menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
         buttonArray[i] = clone;
-        Debug.DrawRay(menuStartPosition, itemPosition, Color.red);
       }
       yield return new WaitForSeconds(1f);
     }
@@ -122,7 +95,6 @@ public class MenuManager : MonoBehaviour
     private void SetScreenCenter(){
       centerX = Screen.width / 2;
       centerY = Screen.height / 2;
-      // screenCenter = Camera.main.ScreenToWorldPoint(new Vector3(centerX, centerY, 0f));
       screenCenter = new Vector3(centerX, centerY, 0f);
     }
 
@@ -140,11 +112,7 @@ public class MenuManager : MonoBehaviour
     }
 
     private void SetStartPosition(Vector3 touch){
-      // Debug.Log("touch");
-      // Debug.Log(touch);
       menuStartPosition = Camera.main.ScreenToWorldPoint(touch);
-      Debug.Log("menuStartPosition");
-      Debug.Log(menuStartPosition);
     }
 
     private void HandleTouchBegan(Vector3 touch){
@@ -170,19 +138,17 @@ public class MenuManager : MonoBehaviour
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    // HandleTouchBegan (touch.position);
-                    // Vector3 touch = (new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                    // float angle = CalcAngleToCenter(touch);
-                    // screenCenter.z = 10f;
+                    // Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
+                    // CalcAngleToCenter(touch);
+                    // screenCenter.z = 0f;
                     // HandleTouchBegan (touch);
                     break;
                 case TouchPhase.Moved:
                     // HandleTouchMoved (touch.position);
                     break;
                 case TouchPhase.Ended:
-                //     HandlesubMenuTouchEnded (touch.position);
-                //     Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                // HandlesubMenuTouchEnded (touch);
+                    //  Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+                    // HandlesubMenuTouchEnded (touch);
                     break;
             }
         } 
