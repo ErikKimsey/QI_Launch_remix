@@ -103,7 +103,6 @@ public class MenuManager : MonoBehaviour
     */
     IEnumerator CreateSubMenu(){
       buttonArray = new GameObject[numbOfMenuItems];
-      isLerping = true;
       for(int i=0; i<numbOfMenuItems; i++){
         Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
         GameObject clone = Instantiate(btnPrefab, itemPosition + menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
@@ -112,15 +111,13 @@ public class MenuManager : MonoBehaviour
         LerpClones(clone, menuInstance.transform.position, endPos);
         buttonArray[i] = clone;
       }
-      isLerping = false;
       yield return new WaitForSeconds(1f);
     }
 
     private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos){
-      while(lerpCompletion < 1f){
-        Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
-        clone.transform.position = nuPos;
-      }
+      Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
+      clone.transform.position = nuPos;
+      Debug.Log(nuPos);
     }
 
     /**
@@ -163,6 +160,7 @@ public class MenuManager : MonoBehaviour
     */
     private void HandleTouchBegan(Vector3 touch){
       subMenuTouchEnd = false;
+      isLerping = false;
       SetStartPosition(touch);
     }
 
@@ -176,6 +174,7 @@ public class MenuManager : MonoBehaviour
     */
     private void HandlesubMenuTouchEnded(Vector3 touch){
       subMenuTouchEnd = true;
+      isLerping = true;
       timeHeld = 0f;
       menuStartQtyCount = 0;
       ClearMenuInstance();
@@ -223,9 +222,9 @@ public class MenuManager : MonoBehaviour
       HandleTouch();
       if(subMenuTouchEnd == false){
         TimeHeld();
-        if(isLerping == true){
-          lerpCompletion += Time.deltaTime;
-        }
+        lerpCompletion += Time.deltaTime;
+        Debug.Log("lerpCompletion");
+        Debug.Log(lerpCompletion);
       } 
     }
 }
