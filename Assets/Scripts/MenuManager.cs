@@ -32,8 +32,11 @@ public class MenuManager : MonoBehaviour
     private Vector3 menuStartPosition;
     private int menuStartQtyLimit = 1, menuStartQtyCount = 0;
 
+    public float animationTime = 5f;
+
     private float timeHeld = 0f;
     private bool subMenuTouchEnd = true;
+    private float timeTouched;
 
     private Vector3 screenCenter;
     private float centerX, centerY;
@@ -60,6 +63,7 @@ public class MenuManager : MonoBehaviour
         if(timeHeld > 0.5f && menuStartQtyCount < menuStartQtyLimit){
           InstantiateMenu();
           menuStartQtyCount+=1;
+          timeTouched = Time.time;
           return;
         }
     } 
@@ -100,9 +104,24 @@ public class MenuManager : MonoBehaviour
       for(int i=0; i<numbOfMenuItems; i++){
         Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
         GameObject clone = Instantiate(btnPrefab, itemPosition + menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
+        // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
+        // LerpClones(clone,menuInstance.transform.position, (itemPosition + menuInstance.transform.position), Time.time);
         buttonArray[i] = clone;
+
       }
       yield return new WaitForSeconds(1f);
+    }
+
+    private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos, float startTime){
+      float time = Time.time - startTime;
+      float completionPerc = startTime / time;
+      
+      Vector3 nuPos = Vector3.Lerp(startPos, endPos, completionPerc);
+      if(nuPos != endPos){
+
+        clone.transform.position = nuPos;
+        LerpClones(clone, startPos, endPos, animationTime);
+      }
     }
 
 
