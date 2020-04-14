@@ -33,6 +33,8 @@ public class MenuManager : MonoBehaviour
     private int menuStartQtyLimit = 1, menuStartQtyCount = 0;
 
     public float animationTime = 5f;
+    private float lerpCompletion = 0.0f;
+    private bool isLerping = false;
 
     private float timeHeld = 0f;
     private bool subMenuTouchEnd = true;
@@ -101,29 +103,25 @@ public class MenuManager : MonoBehaviour
     */
     IEnumerator CreateSubMenu(){
       buttonArray = new GameObject[numbOfMenuItems];
+      isLerping = true;
       for(int i=0; i<numbOfMenuItems; i++){
         Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
         GameObject clone = Instantiate(btnPrefab, itemPosition + menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
         // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
-        // LerpClones(clone,menuInstance.transform.position, (itemPosition + menuInstance.transform.position), Time.time);
+        Vector3 endPos = itemPosition + menuInstance.transform.position;
+        LerpClones(clone, menuInstance.transform.position, endPos);
         buttonArray[i] = clone;
-
       }
+      isLerping = false;
       yield return new WaitForSeconds(1f);
     }
 
-    private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos, float startTime){
-      float time = Time.time - startTime;
-      float completionPerc = startTime / time;
-      
-      Vector3 nuPos = Vector3.Lerp(startPos, endPos, completionPerc);
-      if(nuPos != endPos){
-
+    private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos){
+      while(lerpCompletion < 1f){
+        Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
         clone.transform.position = nuPos;
-        LerpClones(clone, startPos, endPos, animationTime);
       }
     }
-
 
     /**
     * Finds center of screen (in screen points)
@@ -225,6 +223,9 @@ public class MenuManager : MonoBehaviour
       HandleTouch();
       if(subMenuTouchEnd == false){
         TimeHeld();
+        if(isLerping == true){
+          lerpCompletion += Time.deltaTime;
+        }
       } 
     }
 }
