@@ -6,13 +6,14 @@ public class MenuBtn : MonoBehaviour
 {
     public GameObject btnPrefab;
 
-    public float animationTime = 5f;
-    private float lerpCompletion = 0.0f;
+    public float animationTime = 1f;
+    private float lerpCompletion;
     private float lerpStartTime;
 
     void Start()
     {
-      lerpStartTime = Time.time;
+      // lerpStartTime = Time.time;
+      // lerpCompletion = 0f;
     }
 
     public void Lerp(GameObject clone, Vector3 startPos, Vector3 endPos){

@@ -84,7 +84,7 @@ public class MenuManager : MonoBehaviour
     */
     private Vector3 CalcItemLocationOnArc( int index, int len ){
 
-      incrementAngleValue = (Mathf.PI/2f) / len;
+      incrementAngleValue = (Mathf.PI/2f) / len + 0.1f;
 
       float touchAngle = rad2Degs * Mathf.Deg2Rad;
       if (index == 0){
@@ -108,7 +108,7 @@ public class MenuManager : MonoBehaviour
         GameObject clone = Instantiate(btnPrefab, itemPosition + menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
         // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
         Vector3 endPos = itemPosition + menuInstance.transform.position;
-        LerpClones(clone, menuInstance.transform.position, endPos);
+        // LerpClones(clone, menuInstance.transform.position, endPos);
         buttonArray[i] = clone;
       }
       yield return new WaitForSeconds(1f);
@@ -117,7 +117,6 @@ public class MenuManager : MonoBehaviour
     private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos){
       Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
       clone.transform.position = nuPos;
-      Debug.Log(nuPos);
     }
 
     /**
@@ -222,9 +221,7 @@ public class MenuManager : MonoBehaviour
       HandleTouch();
       if(subMenuTouchEnd == false){
         TimeHeld();
-        lerpCompletion += Time.deltaTime;
-        Debug.Log("lerpCompletion");
-        Debug.Log(lerpCompletion);
+        // HandleTouchMoved();
       } 
     }
 }
