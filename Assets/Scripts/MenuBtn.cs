@@ -19,8 +19,8 @@ public class MenuBtn : MonoBehaviour
     }
 
     public void SetStartEndPos(Vector3 start, Vector3 end){
-      Debug.Log("start pos");
-      Debug.Log(start);
+      Debug.Log("end pos");
+      Debug.Log(end);
       startPos = start;
       endPos = end;
     }

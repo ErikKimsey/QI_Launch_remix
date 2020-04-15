@@ -106,4 +106,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be3dd432978f4182a9930bdf7e6b245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btn: {fileID: 72930212987700404}
+  btnPrefab: {fileID: 72930212987700404}
+  animationTime: 1

@@ -107,10 +107,15 @@ public class MenuManager : MonoBehaviour
       buttonArray = new GameObject[numbOfMenuItems];
       for(int i=0; i<numbOfMenuItems; i++){
         Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
+
         itemPosition = itemPosition + menuInstance.transform.position;
+
         MenuBtn btn = new MenuBtn();
+
         btn.SetStartEndPos(menuInstance.transform.position, itemPosition);
+
         GameObject clone = Instantiate(btnPrefab, itemPosition, Quaternion.identity, menuInstance.transform);
+        
         // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
         Vector3 endPos = itemPosition + menuInstance.transform.position;
         // LerpClones(clone, menuInstance.transform.position, endPos);
