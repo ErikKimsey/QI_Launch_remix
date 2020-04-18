@@ -113,6 +113,7 @@ public class MenuManager : MonoBehaviour
         MenuBtn btn = new MenuBtn();
 
         btn.SetStartEndPos(menuInstance.transform.position, itemPosition);
+        // btn.SetAngleFromMenuStart();
 
         GameObject clone = Instantiate(btnPrefab, itemPosition, Quaternion.identity, menuInstance.transform);
         
@@ -174,7 +175,19 @@ public class MenuManager : MonoBehaviour
     }
 
     private void HandleTouchMoved(Vector3 touch){
-      // Debug.Log(touch);
+      Debug.Log(touch);
+      DetermineHoverItem(touch);
+    }
+
+    private void HandleHover(){
+      Debug.Log(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f)));
+    }
+
+    private void DetermineHoverItem(Vector3 touch){
+      // "get line" from angle from menuStart to each menu item
+      // * get angle
+
+      // determine a width from the line, for which hover effect can determine hovered menu item
     }
 
 
@@ -192,37 +205,42 @@ public class MenuManager : MonoBehaviour
     private void HandleTouch(){
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch (0); 
-            switch (touch.phase)
+            Touch mobileTouch = Input.GetTouch (0); 
+            Debug.Log("TOUCH");
+            Debug.Log(mobileTouch.position);
+            switch (mobileTouch.phase)
             {
                 case TouchPhase.Began:
-                    // Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
-                    // CalcAngleToCenter(touch);
-                    // screenCenter.z = 0f;
-                    // HandleTouchBegan (touch);
+                    Vector3 touchPos = new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f);
+                    CalcAngleToCenter(touchPos);
+                    screenCenter.z = 0f;
+                    HandleTouchBegan (touchPos);
                     break;
                 case TouchPhase.Moved:
-                    // HandleTouchMoved (touch.position);
+                    HandleTouchMoved (mobileTouch.position);
                     break;
                 case TouchPhase.Ended:
-                    //  Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                    // HandlesubMenuTouchEnded (touch);
+                    //  Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f));
+                     Vector3 endTouchPos = Camera.main.ScreenToWorldPoint(new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f));
+                    HandlesubMenuTouchEnded (endTouchPos);
                     break;
             }
         } 
         else {
-            if (Input.GetMouseButtonDown (0))
-            {
-                Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
-                CalcAngleToCenter(touch);
-                screenCenter.z = 0f;
-                HandleTouchBegan (touch);
-            }
-            if (Input.GetMouseButtonUp (0))
-            {
-              Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                HandlesubMenuTouchEnded (touch);
-            }
+
+          Debug.Log("NO touchieS");
+            // if (Input.GetMouseButtonDown (0))
+            // {
+            //     Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
+            //     CalcAngleToCenter(touch);
+            //     screenCenter.z = 0f;
+            //     HandleTouchBegan (touch);
+            // }
+            // if (Input.GetMouseButtonUp (0))
+            // {
+            //   Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+            //     HandlesubMenuTouchEnded (touch);
+            // }
         }
     }
 
@@ -232,6 +250,7 @@ public class MenuManager : MonoBehaviour
       if(subMenuTouchEnd == false){
         TimeHeld();
         // HandleTouchMoved();
+        HandleHover();
       } 
     }
 }

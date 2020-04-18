@@ -9,6 +9,7 @@ public class MenuBtn : MonoBehaviour
     public float animationTime = 1f;
     private float lerpCompletion;
     private float lerpStartTime;
+    private float angleFromMenuStart;
 
     private Vector3 startPos, endPos;
 
@@ -19,10 +20,12 @@ public class MenuBtn : MonoBehaviour
     }
 
     public void SetStartEndPos(Vector3 start, Vector3 end){
-      Debug.Log("end pos");
-      Debug.Log(end);
       startPos = start;
       endPos = end;
+    }
+
+    public void SetAngleFromMenuStart(float angle){
+      angleFromMenuStart = angle;
     }
 
     public void Lerp(GameObject clone, Vector3 startPos, Vector3 endPos){
