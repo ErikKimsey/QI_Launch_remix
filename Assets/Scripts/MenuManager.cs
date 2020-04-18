@@ -84,7 +84,7 @@ public class MenuManager : MonoBehaviour
     /**
     * Calculates submenu item location along arc
     */
-    private Vector3 CalcItemLocationOnArc( int index, int len ){
+    private MenuItemVals CalcItemLocationOnArc( int index, int len ){
 
       incrementAngleValue = (Mathf.PI/2f) / len + 0.1f;
 
@@ -97,7 +97,8 @@ public class MenuManager : MonoBehaviour
       float x = Mathf.Cos(pointAngle) * 2f;
       float y = Mathf.Sin(pointAngle) * 2f;
       Vector3 screen = new Vector3(x, y, menuInstance.transform.position.z);
-      return screen;
+      MenuItemVals vals = new MenuItemVals(pointAngle, screen);
+      return vals;
     }
 
     /**
@@ -106,14 +107,15 @@ public class MenuManager : MonoBehaviour
     IEnumerator CreateSubMenu(){
       buttonArray = new GameObject[numbOfMenuItems];
       for(int i=0; i<numbOfMenuItems; i++){
-        Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
+        MenuItemVals itemVals = CalcItemLocationOnArc(i, numbOfMenuItems);
+        Vector3 itemPosition = itemVals.Position;
 
         itemPosition = itemPosition + menuInstance.transform.position;
 
         MenuBtn btn = new MenuBtn();
 
         btn.SetStartEndPos(menuInstance.transform.position, itemPosition);
-        // btn.SetAngleFromMenuStart();
+        btn.SetAngleFromMenuStart(itemVals.Angle);
 
         GameObject clone = Instantiate(btnPrefab, itemPosition, Quaternion.identity, menuInstance.transform);
         
