@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-struct MenuItemVals {
+public struct MenuItemVals {
   public float Angle {get; set;}
   public Vector3 Position {get; set;}
 

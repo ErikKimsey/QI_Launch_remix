@@ -245,6 +245,8 @@ MonoBehaviour:
   btnPrefab: {fileID: 72930212987700404, guid: a512cca1364844dff91e97a27c3830b2, type: 3}
   subMenuBtn: {fileID: 1227166110519992066, guid: 7e6e59c6cdce643e9a0e2a75805925da,
     type: 3}
+  particlePointer: {fileID: 2267081178205783334, guid: c0ea8a3e2ee1f4839a27558feddd4301,
+    type: 3}
   animationTime: 5
   numbOfMenuItems: 4
 --- !u!4 &909530604
@@ -359,5 +361,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   btnPrefab: {fileID: 0}
   subMenuBtn: {fileID: 0}
+  particlePointer: {fileID: 0}
   animationTime: 5
   numbOfMenuItems: 0

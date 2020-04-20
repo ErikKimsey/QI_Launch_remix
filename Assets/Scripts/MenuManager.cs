@@ -23,7 +23,9 @@ public class MenuManager : MonoBehaviour
     MenuBtn menuBtn;
     public GameObject btnPrefab;
     public GameObject subMenuBtn;
+    public GameObject particlePointer;
     private GameObject menuInstance;
+    private GameObject particlePointerInstance;
 
     private float rad2Degs;
 
@@ -51,7 +53,6 @@ public class MenuManager : MonoBehaviour
 
     float pointAngle;
     float incrementAngleValue;
-
 
     void Start()
     {
@@ -146,6 +147,7 @@ public class MenuManager : MonoBehaviour
     */
     private void InstantiateMenu(){
       menuInstance = Instantiate(subMenuBtn, menuStartPosition, Quaternion.identity);
+      particlePointerInstance = Instantiate(particlePointer, menuStartPosition,Quaternion.identity);
       StartCoroutine(CreateSubMenu());
     }
 
@@ -153,6 +155,7 @@ public class MenuManager : MonoBehaviour
     * Upon touchEnd, destroys instances of initial menu item and submenu items 
     */
     private void ClearMenuInstance(){
+      Destroy(particlePointerInstance);
       for (int i = 0; i < buttonArray.Length; i++)
       {
         Destroy(buttonArray[i]);
@@ -177,18 +180,23 @@ public class MenuManager : MonoBehaviour
     }
 
     private void HandleTouchMoved(Vector3 touch){
-      Debug.Log(touch);
+
+      Vector3 convertedTouch = Camera.main.ScreenToWorldPoint(touch);
+      ;
+      Vector3 direction = convertedTouch - menuStartPosition;
+      Quaternion rotation = Quaternion.LookRotation(direction);
+      particlePointerInstance.transform.rotation = rotation;
       DetermineHoverItem(touch);
     }
 
     private void HandleHover(){
-      Debug.Log(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f)));
+      // Debug.Log(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f)));
     }
 
     private void DetermineHoverItem(Vector3 touch){
       // "get line" from angle from menuStart to each menu item
       // * get angle
-
+      Vector3 direction = touch - menuStartPosition;
       // determine a width from the line, for which hover effect can determine hovered menu item
     }
 
@@ -208,8 +216,6 @@ public class MenuManager : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch mobileTouch = Input.GetTouch (0); 
-            Debug.Log("TOUCH");
-            Debug.Log(mobileTouch.position);
             switch (mobileTouch.phase)
             {
                 case TouchPhase.Began:
@@ -219,7 +225,8 @@ public class MenuManager : MonoBehaviour
                     HandleTouchBegan (touchPos);
                     break;
                 case TouchPhase.Moved:
-                    HandleTouchMoved (mobileTouch.position);
+                Vector3 mTouchPos = new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f);
+                    HandleTouchMoved (mTouchPos);
                     break;
                 case TouchPhase.Ended:
                     //  Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f));
@@ -230,7 +237,7 @@ public class MenuManager : MonoBehaviour
         } 
         else {
 
-          Debug.Log("NO touchieS");
+          // Debug.Log("NO touchieS");
             // if (Input.GetMouseButtonDown (0))
             // {
             //     Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
