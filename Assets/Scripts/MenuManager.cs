@@ -180,27 +180,17 @@ public class MenuManager : MonoBehaviour
     }
 
     private void HandleTouchMoved(Vector3 touch){
-
-      Vector3 convertedTouch = Camera.main.ScreenToWorldPoint(touch);
-      Debug.DrawLine(menuStartPosition, convertedTouch, Color.magenta);
-      
-      if (Physics.Raycast(menuStartPosition, convertedTouch)){
-        Debug.Log("Collided");
-      }
-      // DetermineHoverItem(touch);
-    }
-
-    private void HandleHover(){
-      // Debug.Log(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f)));
+      DetermineHoverItem(touch);
     }
 
     private void DetermineHoverItem(Vector3 touch){
-      // "get line" from angle from menuStart to each menu item
-      // * get angle
-      Vector3 direction = touch - menuStartPosition;
-      // determine a width from the line, for which hover effect can determine hovered menu item
+      Vector3 convertedTouch = Camera.main.ScreenToWorldPoint(touch);
+      Debug.DrawLine(menuStartPosition, convertedTouch, Color.magenta);
+      Ray ray = Camera.main.ScreenPointToRay(touch);
+      if (Physics.Raycast(ray)){
+        Debug.Log("Collided");
+      }
     }
-
 
     /**
     * Toggles "subMenuTouchEnd" as true, to tell logic in Update to destroy menu
@@ -259,8 +249,6 @@ public class MenuManager : MonoBehaviour
       HandleTouch();
       if(subMenuTouchEnd == false){
         TimeHeld();
-        // HandleTouchMoved();
-        HandleHover();
       } 
     }
 }
