@@ -23,9 +23,7 @@ public class MenuManager : MonoBehaviour
     MenuBtn menuBtn;
     public GameObject btnPrefab;
     public GameObject subMenuBtn;
-    public GameObject particlePointer;
     private GameObject menuInstance;
-    private GameObject particlePointerInstance;
 
     private float rad2Degs;
 
@@ -147,7 +145,6 @@ public class MenuManager : MonoBehaviour
     */
     private void InstantiateMenu(){
       menuInstance = Instantiate(subMenuBtn, menuStartPosition, Quaternion.identity);
-      particlePointerInstance = Instantiate(particlePointer, menuStartPosition,Quaternion.identity);
       StartCoroutine(CreateSubMenu());
     }
 
@@ -155,7 +152,6 @@ public class MenuManager : MonoBehaviour
     * Upon touchEnd, destroys instances of initial menu item and submenu items 
     */
     private void ClearMenuInstance(){
-      Destroy(particlePointerInstance);
       for (int i = 0; i < buttonArray.Length; i++)
       {
         Destroy(buttonArray[i]);
@@ -179,14 +175,19 @@ public class MenuManager : MonoBehaviour
       SetStartPosition(touch);
     }
 
+    private void HandleRayCollision(){
+
+    }
+
     private void HandleTouchMoved(Vector3 touch){
 
       Vector3 convertedTouch = Camera.main.ScreenToWorldPoint(touch);
-      ;
-      Vector3 direction = convertedTouch - menuStartPosition;
-      Quaternion rotation = Quaternion.LookRotation(direction);
-      particlePointerInstance.transform.rotation = rotation;
-      DetermineHoverItem(touch);
+      Debug.DrawLine(menuStartPosition, convertedTouch, Color.magenta);
+      
+      if (Physics.Raycast(menuStartPosition, convertedTouch)){
+        Debug.Log("Collided");
+      }
+      // DetermineHoverItem(touch);
     }
 
     private void HandleHover(){
