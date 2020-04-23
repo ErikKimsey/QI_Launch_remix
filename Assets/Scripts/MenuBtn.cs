@@ -4,33 +4,34 @@ using UnityEngine;
 
 public class MenuBtn : MonoBehaviour
 {
-    public GameObject btn;
-    private Vector3 btnWorldToScreenPosition;
-    private Vector3 btnRadiusWorldToScreenPosition;
+    public GameObject btnPrefab;
 
-    private float btnRadius;
-    private Mesh btnMesh;
+    public float animationTime = 1f;
+    private float lerpCompletion;
+    private float lerpStartTime;
+    private float angleFromMenuStart;
 
-    private Vector3 buttonArcLocation;
-    private string navAction;
-
-    Camera cam;
+    private Vector3 startPos, endPos;
 
     void Start()
     {
-      cam = Camera.main;
-      btnMesh = GetComponent<MeshFilter>().mesh;
-      Renderer renderer = GetComponent<Renderer>();
-      btnWorldToScreenPosition = renderer.bounds.center;  
-      CalcRadius(btnMesh);
+      lerpStartTime = Time.time;
+      lerpCompletion = 0f;
     }
 
-    private void CalcRadius(Mesh mesh){
-      Vector3 extents = mesh.bounds.extents;
-      Vector3 center = mesh.bounds.center;
-      btnRadius = extents.x - center.x;
+    public void SetStartEndPos(Vector3 start, Vector3 end){
+      startPos = start;
+      endPos = end;
     }
 
+    public void SetAngleFromMenuStart(float angle){
+      angleFromMenuStart = angle;
+    }
+
+    public void Lerp(GameObject clone, Vector3 startPos, Vector3 endPos){
+      Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
+      transform.position = nuPos;
+    }
 
     void Update()
     {

@@ -19,6 +19,8 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
+
+    MenuBtn menuBtn;
     public GameObject btnPrefab;
     public GameObject subMenuBtn;
     private GameObject menuInstance;
@@ -33,6 +35,8 @@ public class MenuManager : MonoBehaviour
     private int menuStartQtyLimit = 1, menuStartQtyCount = 0;
 
     public float animationTime = 5f;
+    private float lerpCompletion = 0.0f;
+    private bool isLerping = false;
 
     private float timeHeld = 0f;
     private bool subMenuTouchEnd = true;
@@ -47,7 +51,6 @@ public class MenuManager : MonoBehaviour
 
     float pointAngle;
     float incrementAngleValue;
-
 
     void Start()
     {
@@ -80,9 +83,9 @@ public class MenuManager : MonoBehaviour
     /**
     * Calculates submenu item location along arc
     */
-    private Vector3 CalcItemLocationOnArc( int index, int len ){
+    private MenuItemVals CalcItemLocationOnArc( int index, int len ){
 
-      incrementAngleValue = (Mathf.PI/2f) / len;
+      incrementAngleValue = (Mathf.PI/2f) / len + 0.1f;
 
       float touchAngle = rad2Degs * Mathf.Deg2Rad;
       if (index == 0){
@@ -93,7 +96,8 @@ public class MenuManager : MonoBehaviour
       float x = Mathf.Cos(pointAngle) * 2f;
       float y = Mathf.Sin(pointAngle) * 2f;
       Vector3 screen = new Vector3(x, y, menuInstance.transform.position.z);
-      return screen;
+      MenuItemVals vals = new MenuItemVals(pointAngle, screen);
+      return vals;
     }
 
     /**
@@ -102,28 +106,30 @@ public class MenuManager : MonoBehaviour
     IEnumerator CreateSubMenu(){
       buttonArray = new GameObject[numbOfMenuItems];
       for(int i=0; i<numbOfMenuItems; i++){
-        Vector3 itemPosition = CalcItemLocationOnArc(i, numbOfMenuItems);
-        GameObject clone = Instantiate(btnPrefab, itemPosition + menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
-        // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
-        // LerpClones(clone,menuInstance.transform.position, (itemPosition + menuInstance.transform.position), Time.time);
-        buttonArray[i] = clone;
+        MenuItemVals itemVals = CalcItemLocationOnArc(i, numbOfMenuItems);
+        Vector3 itemPosition = itemVals.Position;
 
+        itemPosition = itemPosition + menuInstance.transform.position;
+
+        MenuBtn btn = new MenuBtn();
+
+        btn.SetStartEndPos(menuInstance.transform.position, itemPosition);
+        btn.SetAngleFromMenuStart(itemVals.Angle);
+
+        GameObject clone = Instantiate(btnPrefab, itemPosition, Quaternion.identity, menuInstance.transform);
+        
+        // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
+        Vector3 endPos = itemPosition + menuInstance.transform.position;
+        // LerpClones(clone, menuInstance.transform.position, endPos);
+        buttonArray[i] = clone;
       }
       yield return new WaitForSeconds(1f);
     }
 
-    private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos, float startTime){
-      float time = Time.time - startTime;
-      float completionPerc = startTime / time;
-      
-      Vector3 nuPos = Vector3.Lerp(startPos, endPos, completionPerc);
-      if(nuPos != endPos){
-
-        clone.transform.position = nuPos;
-        LerpClones(clone, startPos, endPos, animationTime);
-      }
+    private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos){
+      Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
+      clone.transform.position = nuPos;
     }
-
 
     /**
     * Finds center of screen (in screen points)
@@ -165,11 +171,34 @@ public class MenuManager : MonoBehaviour
     */
     private void HandleTouchBegan(Vector3 touch){
       subMenuTouchEnd = false;
+      isLerping = false;
       SetStartPosition(touch);
     }
 
+    private void HandleRayCollision(){
+
+    }
+
     private void HandleTouchMoved(Vector3 touch){
-      // Debug.Log(touch);
+
+      Vector3 convertedTouch = Camera.main.ScreenToWorldPoint(touch);
+      Debug.DrawLine(menuStartPosition, convertedTouch, Color.magenta);
+      
+      if (Physics.Raycast(menuStartPosition, convertedTouch)){
+        Debug.Log("Collided");
+      }
+      // DetermineHoverItem(touch);
+    }
+
+    private void HandleHover(){
+      // Debug.Log(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f)));
+    }
+
+    private void DetermineHoverItem(Vector3 touch){
+      // "get line" from angle from menuStart to each menu item
+      // * get angle
+      Vector3 direction = touch - menuStartPosition;
+      // determine a width from the line, for which hover effect can determine hovered menu item
     }
 
 
@@ -178,6 +207,7 @@ public class MenuManager : MonoBehaviour
     */
     private void HandlesubMenuTouchEnded(Vector3 touch){
       subMenuTouchEnd = true;
+      isLerping = true;
       timeHeld = 0f;
       menuStartQtyCount = 0;
       ClearMenuInstance();
@@ -186,37 +216,41 @@ public class MenuManager : MonoBehaviour
     private void HandleTouch(){
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch (0); 
-            switch (touch.phase)
+            Touch mobileTouch = Input.GetTouch (0); 
+            switch (mobileTouch.phase)
             {
                 case TouchPhase.Began:
-                    // Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
-                    // CalcAngleToCenter(touch);
-                    // screenCenter.z = 0f;
-                    // HandleTouchBegan (touch);
+                    Vector3 touchPos = new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f);
+                    CalcAngleToCenter(touchPos);
+                    screenCenter.z = 0f;
+                    HandleTouchBegan (touchPos);
                     break;
                 case TouchPhase.Moved:
-                    // HandleTouchMoved (touch.position);
+                Vector3 mTouchPos = new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f);
+                    HandleTouchMoved (mTouchPos);
                     break;
                 case TouchPhase.Ended:
-                    //  Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                    // HandlesubMenuTouchEnded (touch);
+                    //  Vector3 touchPos = Camera.main.ScreenToWorldPoint(new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f));
+                     Vector3 endTouchPos = Camera.main.ScreenToWorldPoint(new Vector3(mobileTouch.position.x, mobileTouch.position.y, 10f));
+                    HandlesubMenuTouchEnded (endTouchPos);
                     break;
             }
         } 
         else {
-            if (Input.GetMouseButtonDown (0))
-            {
-                Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
-                CalcAngleToCenter(touch);
-                screenCenter.z = 0f;
-                HandleTouchBegan (touch);
-            }
-            if (Input.GetMouseButtonUp (0))
-            {
-              Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-                HandlesubMenuTouchEnded (touch);
-            }
+
+          // Debug.Log("NO touchieS");
+            // if (Input.GetMouseButtonDown (0))
+            // {
+            //     Vector3 touch = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
+            //     CalcAngleToCenter(touch);
+            //     screenCenter.z = 0f;
+            //     HandleTouchBegan (touch);
+            // }
+            // if (Input.GetMouseButtonUp (0))
+            // {
+            //   Vector3 touch = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+            //     HandlesubMenuTouchEnded (touch);
+            // }
         }
     }
 
@@ -225,6 +259,8 @@ public class MenuManager : MonoBehaviour
       HandleTouch();
       if(subMenuTouchEnd == false){
         TimeHeld();
+        // HandleTouchMoved();
+        HandleHover();
       } 
     }
 }
