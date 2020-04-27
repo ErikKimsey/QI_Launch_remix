@@ -38,7 +38,6 @@ public class MenuBtn : MonoBehaviour
 
     public void SetName(string name){
       itemName = name;
-      Debug.Log(itemName);
     }
 
     public void SetItemIndex(int i){

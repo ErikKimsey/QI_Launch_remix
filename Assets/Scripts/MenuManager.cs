@@ -52,6 +52,11 @@ public class MenuManager : MonoBehaviour
     float pointAngle;
     float incrementAngleValue;
 
+    private bool readyToLerp = false;
+    float startTime; 
+    public float speed = 1.0F;
+    private float distanceLength;
+
     void Start()
     {
       SetScreenCenter();
@@ -115,7 +120,7 @@ public class MenuManager : MonoBehaviour
 
         GameObject clone = Instantiate(btnPrefab, itemPosition, Quaternion.identity, menuInstance.transform);
         clone.name = i.ToString();
-        Debug.Log(clone.name);
+        
         btn.SetName(clone.name);
         
         // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
@@ -123,6 +128,12 @@ public class MenuManager : MonoBehaviour
         // LerpClones(clone, menuInstance.transform.position, endPos);
         buttonArray[i] = clone;
       }
+      readyToLerp = true;
+      Debug.Log(readyToLerp);
+      startTime = Time.time;
+      distanceLength = Vector3.Distance(menuInstance.transform.position, buttonArray[0].transform.position);
+      Debug.Log("distanceLength");
+      Debug.Log(distanceLength);
       yield return new WaitForSeconds(1f);
     }
 
@@ -191,8 +202,6 @@ public class MenuManager : MonoBehaviour
       if (Physics.Raycast(ray, out hit)){
         // get this item
         // apply transform on this item
-        Debug.Log("Collided");
-        Debug.Log(hit.collider.gameObject.transform.localScale);
         if(hit.collider.gameObject.tag == "MenuBtn"){
           hit.collider.gameObject.transform.localScale = hit.collider.gameObject.transform.localScale * 1.005f;
         } 
@@ -260,6 +269,11 @@ public class MenuManager : MonoBehaviour
       HandleTouch();
       if(subMenuTouchEnd == false){
         TimeHeld();
+        if(readyToLerp){
+          float distCovered = (Time.time - startTime) * speed;
+          float fractionOfJourney = distCovered / distanceLength;
+          buttonArray[0].transform.position = Vector3.Lerp(menuInstance.transform.position, buttonArray[0].transform.position, fractionOfJourney);
+        }
       } 
     }
 }
