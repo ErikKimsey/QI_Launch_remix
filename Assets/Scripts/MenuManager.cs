@@ -114,6 +114,9 @@ public class MenuManager : MonoBehaviour
         btn.SetAngleFromMenuStart(itemVals.Angle);
 
         GameObject clone = Instantiate(btnPrefab, itemPosition, Quaternion.identity, menuInstance.transform);
+        clone.name = i.ToString();
+        Debug.Log(clone.name);
+        btn.SetName(clone.name);
         
         // GameObject clone = Instantiate(btnPrefab, menuInstance.transform.position, Quaternion.identity, menuInstance.transform);
         Vector3 endPos = itemPosition + menuInstance.transform.position;
@@ -186,8 +189,17 @@ public class MenuManager : MonoBehaviour
       Ray ray = Camera.main.ScreenPointToRay(touch);
       RaycastHit hit;
       if (Physics.Raycast(ray, out hit)){
+        // get this item
+        // apply transform on this item
         Debug.Log("Collided");
-        Debug.Log(hit);
+        Debug.Log(hit.collider.gameObject.transform.localScale);
+        if(hit.collider.gameObject.tag == "MenuBtn"){
+          hit.collider.gameObject.transform.localScale = hit.collider.gameObject.transform.localScale * 1.005f;
+        } 
+      } else {
+        for(int i=0; i < buttonArray.Length; i++){
+          buttonArray[i].gameObject.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+        }
       }
     }
 

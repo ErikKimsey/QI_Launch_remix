@@ -13,6 +13,7 @@ public class MenuBtn : MonoBehaviour
 
     private string itemText;
     private string itemLink;
+    private string itemName;
     private int itemArrayIndex;
 
     private Vector3 startPos, endPos;
@@ -33,6 +34,11 @@ public class MenuBtn : MonoBehaviour
 
     public void SetText(string text){
       itemText = text;
+    }
+
+    public void SetName(string name){
+      itemName = name;
+      Debug.Log(itemName);
     }
 
     public void SetItemIndex(int i){
