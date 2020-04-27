@@ -11,10 +11,13 @@ public class MenuBtn : MonoBehaviour
     private float lerpStartTime;
     private float angleFromMenuStart;
 
+    private string itemText;
+    private string itemLink;
+    private int itemArrayIndex;
+
     private Vector3 startPos, endPos;
 
-    void Start()
-    {
+    void Start(){
       lerpStartTime = Time.time;
       lerpCompletion = 0f;
     }
@@ -22,6 +25,18 @@ public class MenuBtn : MonoBehaviour
     public void SetStartEndPos(Vector3 start, Vector3 end){
       startPos = start;
       endPos = end;
+    }
+
+    public void SetLink(string link){
+      itemLink = link;
+    }
+
+    public void SetText(string text){
+      itemText = text;
+    }
+
+    public void SetItemIndex(int i){
+      itemArrayIndex = i;
     }
 
     public void SetAngleFromMenuStart(float angle){
@@ -33,8 +48,7 @@ public class MenuBtn : MonoBehaviour
       transform.position = nuPos;
     }
 
-    void Update()
-    {
+    void Update(){
       
     }
 }

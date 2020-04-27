@@ -57,7 +57,6 @@ public class MenuManager : MonoBehaviour
       SetScreenCenter();
     }
 
-
     /**
     * Watches initial time that touch is held.  (Touch must be held mininum number of seconds before menu is instantiated.)
     */
@@ -84,9 +83,7 @@ public class MenuManager : MonoBehaviour
     * Calculates submenu item location along arc
     */
     private MenuItemVals CalcItemLocationOnArc( int index, int len ){
-
       incrementAngleValue = (Mathf.PI/2f) / len + 0.1f;
-
       float touchAngle = rad2Degs * Mathf.Deg2Rad;
       if (index == 0){
         pointAngle = touchAngle - (incrementAngleValue * (len/2));
@@ -126,10 +123,10 @@ public class MenuManager : MonoBehaviour
       yield return new WaitForSeconds(1f);
     }
 
-    private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos){
-      Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
-      clone.transform.position = nuPos;
-    }
+    // private void LerpClones(GameObject clone, Vector3 startPos, Vector3 endPos){
+    //   Vector3 nuPos = Vector3.Lerp(startPos, endPos, lerpCompletion);
+    //   clone.transform.position = nuPos;
+    // }
 
     /**
     * Finds center of screen (in screen points)
@@ -187,8 +184,10 @@ public class MenuManager : MonoBehaviour
       Vector3 convertedTouch = Camera.main.ScreenToWorldPoint(touch);
       Debug.DrawLine(menuStartPosition, convertedTouch, Color.magenta);
       Ray ray = Camera.main.ScreenPointToRay(touch);
-      if (Physics.Raycast(ray)){
+      RaycastHit hit;
+      if (Physics.Raycast(ray, out hit)){
         Debug.Log("Collided");
+        Debug.Log(hit);
       }
     }
 
