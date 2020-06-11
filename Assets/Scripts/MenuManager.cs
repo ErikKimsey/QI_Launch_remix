@@ -90,7 +90,7 @@ public class MenuManager : MonoBehaviour
     private MenuItemVals CalcItemLocationOnArc( int index, int len ){
       incrementAngleValue = (Mathf.PI/2f) / len + 0.1f;
       float touchAngle = rad2Degs * Mathf.Deg2Rad;
-      if (index == 0){
+      if (index == 0) {
         pointAngle = touchAngle - (incrementAngleValue * (len/2));
       } else {
         pointAngle = pointAngle + incrementAngleValue;
